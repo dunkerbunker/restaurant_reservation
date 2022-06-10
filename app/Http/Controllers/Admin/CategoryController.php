@@ -43,11 +43,11 @@ class CategoryController extends Controller
 
         Category::create([
             'name' => $request->name,
-            'image' => $image,
             'description' => $request->description,
+            'image' => $image
         ]);
 
-        return to_route('admin.categories.index');
+        return to_route('admin.categories.index')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -71,7 +71,7 @@ class CategoryController extends Controller
     {
         return view('admin.categories.edit', compact('category'));
     }
- 
+
     /**
      * Update the specified resource in storage.
      *
@@ -82,20 +82,21 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'required|max:255',
+            'name' => 'required',
+            'description' => 'required'
         ]);
         $image = $category->image;
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             Storage::delete($category->image);
             $image = $request->file('image')->store('public/categories');
         }
+
         $category->update([
             'name' => $request->name,
-            'image' => $image,
             'description' => $request->description,
+            'image' => $image
         ]);
-        return to_route('admin.categories.index');
+        return to_route('admin.categories.index')->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -107,7 +108,9 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         Storage::delete($category->image);
+        $category->menus()->detach();
         $category->delete();
-        return to_route('admin.categories.index');
+
+        return to_route('admin.categories.index')->with('danger', 'Category deleted successfully.');
     }
 }
