@@ -15,3 +15,4 @@ class MenuController extends Controller
         return view('menus.index', compact('menus'));
     }
 }
+// return view('menus.index', compact('menus'));
